@@ -1,7 +1,8 @@
 streamlit
 pandas
 plotly
+plost
 psycopg2
 requests
 numpy
-matplotlib.plotly
+matplotlib

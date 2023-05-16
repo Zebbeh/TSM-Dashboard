@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import requests
+import plost
+
+
 
 def get_access_token(api_key):
     # Define the authentication endpoint URL
@@ -51,8 +54,6 @@ def settings_page():
 
 
 def server_page():
-    
-
     if "access_token" not in st.session_state:
         st.warning("Please set the API key in the Settings page.")
     else:
@@ -71,6 +72,7 @@ def server_page():
             region_options = []
             region_ids = []
         # Create selectbox in sidebar
+        st.sidebar.title("Server params")
         selected_index = st.sidebar.selectbox("Select Region", range(len(region_options)), format_func=lambda i: region_options[i])
         selected_region_id = region_ids[selected_index] if regions else None
 
@@ -109,90 +111,213 @@ def server_page():
                 #url = f"https://pricing-api.tradeskillmaster.com/ah/{selected_ah_id}"
                 #response = requests.get(url, headers={"Authorization": f"Bearer {access_token}"})
                 #items = response.json()
-
-
-
-                # "Alexstraszite": 192852, "Ysemerald": 192859, "Nozdorite": 192866, "Malygite": 192856, "Neltharite": 192862
-                herb_list = [
-
-                ]
-                ore_list = [
-
-                ]
-                cloth_list = [
-
-                ]
-                gems = [
-                    {"id": 192852, "name": "Alexstraszite", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
-                    {"id": 192859, "name": "Ysemerald", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
-                    {"id": 192866, "name": "Nozdorite", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
-                    {"id": 192856, "name": "Malygite", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
-                    {"id": 192862, "name": "Neltharite", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None}
+                if len(ah_id) == 1:
+                    game_version = "Retail"
+                else:
+                    game_version = "Vanilla"
+                if game_version == "Retail":
+                    #List of the dragonflight Ores
+                    ores = [
+                       #Shadowflame Essence 
+                       {"id": 204464, "name": "Shadowflame Essence", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       #Dracothyst
+                       {"id": 204463, "name": "Dracothyst", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       #Shadowed Alloy
+                       {"id": 204995, "name": "Shadowed Alloy R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 204996, "name": "Shadowed Alloy R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 204994, "name": "Shadowed Alloy R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       #Dracothyst Shard, might be unable to auction
+                       {"id": 204462, "name": "Dracothyst Shard", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       #Primal Flux, can be bought from vendors
+                       {"id": 190452, "name": "Primal Flux", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       #Primal Molten Alloy
+                       {"id": 189541, "name": "Primal Molten Alloy R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 189542, "name": "Primal Molten Alloy R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 189543, "name": "Primal Molten Alloy R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       #Obsidian Seared Alloy
+                       {"id": 190533, "name": "Obsidian Seared Alloy R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 190534, "name": "Obsidian Seared Alloy R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 190535, "name": "Obsidian Seared Alloy R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       #Khaz'gorite Ore
+                       {"id": 190312, "name": "Khaz'gorite Ore R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 190313, "name": "Khaz'gorite Ore R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 190314, "name": "Khaz'gorite Ore R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       #Draconium Ore
+                       {"id": 189143, "name": "Draconium Ore R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 188658, "name": "Draconium Ore R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 190311, "name": "Draconium Ore R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       #Infurious Alloy
+                       {"id": 190536, "name": "Infurious Alloy R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 190537, "name": "Infurious Alloy R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 190538, "name": "Infurious Alloy R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       #Serevite Ore
+                       {"id": 190395, "name": "Serevite Ore R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 190396, "name": "Serevite Ore R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 190394, "name": "Serevite Ore R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       #Frostfire Alloy
+                       {"id": 190530, "name": "Frostfire Alloy R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 190531, "name": "Frostfire Alloy R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                       {"id": 190532, "name": "Frostfire Alloy R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None}
                     ]
-                for gem in gems:
-                    gem_id = gem["id"]
-                    response = requests.get(f"https://pricing-api.tradeskillmaster.com/ah/{selected_ah_id}/item/{gem_id}", headers={"Authorization": f"Bearer {access_token}"})
-                    if response.status_code == 200:
-                        gem_details = response.json()
 
-                        gem["minBuyout"] = gem_details["minBuyout"]
-                        gem["quantity"] = gem_details["quantity"]
-                        gem["marketValue"] = gem_details["marketValue"]
-                        gem["historical"] = gem_details["historical"]
-                        gem["numAuctions"] = gem_details["numAuctions"]
-                    else:
-                        print(f"Error in gem details request for gem ID {gem_id}")   
+                    for ore in ores:
+                        ore_id = ore["id"]
+                        response = requests.get(f"https://pricing-api.tradeskillmaster.com/ah/{selected_ah_id}/item/{ore_id}", headers={"Authorization": f"Bearer {access_token}"})
+                        if response.status_code == 200:
+                            ore_details = response.json()
+
+                            ore["minBuyout"] = ore_details["minBuyout"]
+                            ore["quantity"] = ore_details["quantity"]
+                            ore["marketValue"] = ore_details["marketValue"]
+                            ore["historical"] = ore_details["historical"]
+                            ore["numAuctions"] = ore_details["numAuctions"]
+                        else:
+                            print(f"Error in gem details request for gem ID {ore_id}")
+                    #List of the dragonflight Cloths
+                    cloths = [
+                        #Axureweave Bolt
+                        {"id": 193938, "name": "Azureweave Bolt R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 193939, "name": "Azureweave Bolt R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 193940, "name": "Azureweave Bolt R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Wildercloth
+                        {"id": 193922, "name": "Wildercloth", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Tattered Wildercloth
+                        {"id": 193050, "name": "Tattered Wildercloth", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Spool of Wilderthread
+                        {"id": 192095, "name": "Spool of Wilderthread R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192096, "name": "Spool of Wilderthread R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192097, "name": "Spool of Wilderthread R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Contoured Fowlfeather
+                        {"id": 193053, "name": "Contoured Fowlfeather", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Vibrant Wildercloth Bolt
+                        {"id": 193929, "name": "Vibrant Wildercloth Bolt R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 193930, "name": "Vibrant Wildercloth Bolt R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 193931, "name": "Vibrant Wildercloth Bolt R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Chronocloth Bolt
+                        {"id": 193935, "name": "Chronocloth Bolt R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 193936, "name": "Chronocloth Bolt R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 193937, "name": "Chronocloth Bolt R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Frostbitten Wildercloth
+                        {"id": 193924, "name": "Frostbitten Wildercloth", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Wildercloth Bolt
+                        {"id": 193926, "name": "Wildercloth Bolt R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 193927, "name": "Wildercloth Bolt R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 193928, "name": "Wildercloth Bolt R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Decayed Wildercloth
+                        {"id": 193923, "name": "Decayed Wildercloth", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Singed Wildercloth
+                        {"id": 193925, "name": "Singed Wildercloth", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Infurious Wildercloth Bolt
+                        {"id": 193932, "name": "Infurious Wildercloth Bolt R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 193933, "name": "Infurious Wildercloth Bolt R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 193934, "name": "Infurious Wildercloth Bolt R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None}  
+                    ]
+
+                    for cloth in cloths:
+                        cloth_id = cloth["id"]
+                        response = requests.get(f"https://pricing-api.tradeskillmaster.com/ah/{selected_ah_id}/item/{cloth_id}", headers={"Authorization": f"Bearer {access_token}"})
+                        if response.status_code == 200:
+                            cloth_details = response.json()
+
+                            cloth["minBuyout"] = cloth_details["minBuyout"]
+                            cloth["quantity"] = cloth_details["quantity"]
+                            cloth["marketValue"] = cloth_details["marketValue"]
+                            cloth["historical"] = cloth_details["historical"]
+                            cloth["numAuctions"] = cloth_details["numAuctions"]
+                        else:
+                            print(f"Error in gem details request for gem ID {cloth_id}")
+                    #List of the dragonflight gems
+                    gems = [
+                        #Alextraszite
+                        {"id": 192852, "name": "Alexstraszite R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192853, "name": "Alexstraszite R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192855, "name": "Alexstraszite R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},                        
+                        #Ysmerald
+                        {"id": 192859, "name": "Ysemerald R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192860, "name": "Ysemerald R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192861, "name": "Ysemerald R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Nozdorite
+                        {"id": 192866, "name": "Nozdorite R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192867, "name": "Nozdorite R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192868, "name": "Nozdorite R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Malygite
+                        {"id": 192856, "name": "Malygite R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192857, "name": "Malygite R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192858, "name": "Malygite R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Neltharite
+                        {"id": 192862, "name": "Neltharite R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192863, "name": "Neltharite R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192865, "name": "Neltharite R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Mystic Sapphire
+                        {"id": 192840, "name": "Mystic Sapphire R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192841, "name": "Mystic Sapphire R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192842, "name": "Mystic Sapphire R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Sundered Onyx
+                        {"id": 192846, "name": "Sundered Onyx R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192847, "name": "Sundered Onyx R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192848, "name": "Sundered Onyx R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Vibrant Emerlad
+                        {"id": 192843, "name": "Vibrant Emerald R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192844, "name": "Vibrant Emerald R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192845, "name": "Vibrant Emerald R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Eternity Amber
+                        {"id": 192849, "name": "Eternity Amber R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192850, "name": "Eternity Amber R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192851, "name": "Eternity Amber R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Illimited Diamond
+                        {"id": 192869, "name": "Illimited Diamond R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192870, "name": "Illimited Diamond R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192871, "name": "Illimited Diamond R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #Queen's Ruby
+                        {"id": 192837, "name": "Queen's Ruby R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192838, "name": "Queen's Ruby R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        {"id": 192839, "name": "Queen's Ruby R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None}
+                        ]
+                    for gem in gems:
+                        gem_id = gem["id"]
+                        response = requests.get(f"https://pricing-api.tradeskillmaster.com/ah/{selected_ah_id}/item/{gem_id}", headers={"Authorization": f"Bearer {access_token}"})
+                        if response.status_code == 200:
+                            gem_details = response.json()
+
+                            gem["minBuyout"] = gem_details["minBuyout"]
+                            gem["quantity"] = gem_details["quantity"]
+                            gem["marketValue"] = gem_details["marketValue"]
+                            gem["historical"] = gem_details["historical"]
+                            gem["numAuctions"] = gem_details["numAuctions"]
+                        else:
+                            print(f"Error in gem details request for gem ID {gem_id}")   
 
 
 
 
-                # DataFrame for gems        
-                df = pd.DataFrame(gems)
-                pd.options.display.float_format = '{:,.0f}'.format
-                df["id"] = df["id"].astype(int)
-                df.set_index("id", inplace=True)
-                
-                # Create a bar chart
-                
-                # Checkbox to deside if you want to see the gem information or not
-                show_gems = st.checkbox("Show Gems", value=True)
-                #show_ores = st.checkbox("Show Ores", value=True)
-
-                chart_data = df[['name','minBuyout', 'marketValue']].set_index('name')
-                fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
-                if show_gems:
-                    chart_data.plot(kind='bar', ax=ax1)
-                    ax1.set_xlabel('Gem Name')
-                    ax1.set_ylabel('Value')
-                    ax1.set_title('Gem Buyout and Market Values')
-                    ax1.set_xticklabels(ax1.get_xticklabels(), rotation=45)
-                pie_chart_data = df.set_index('name')['quantity']
-
-                ax2.pie(pie_chart_data, labels=pie_chart_data.index, autopct='%1.1f%%', startangle=90)
-                ax2.set_title('Gem Quantity in Auction House')
-
-                plt.subplots_adjust(wspace=0.4)
-                
+                    # DataFrame for gems        
+                    df = pd.DataFrame(gems)
+                    pd.options.display.float_format = '{:,.0f}'.format
+                    df["id"] = df["id"].astype(int)
+                    df.set_index("id", inplace=True)
+                   
+                    chart_data = df[["name","minBuyout", "marketValue"]].set_index('name')
+                    fig,ax = plt.subplots()
+                    chart_data.plot(kind='bar', ax=ax)
 
 
-                st.pyplot(fig)
                     
+                    ax.set_xlabel("Gem Name")
+                    ax.set_ylabel("Value")
+                    ax.set_title("Gem Buyout Prices and Market values")
 
-
-
-
-
-
-
-
-
-
-
-
+                    #plt.xticks(rotation=45)
+                    st.pyplot(fig)
+                   
+                if game_version == "Vanilla":
+                    st.write("Please select a retail region")    
 
 
 def main():
-    st.sidebar.title("Navigation")
+
+    st.set_page_config(layout="wide", initial_sidebar_state='expanded')
+    st.sidebar.title('Dashboard `version 0.1`')
+    st.sidebar.header("Navigation")
     pages = ["Settings", "Server", "Region"]
     selected_page = st.sidebar.selectbox("Page", pages)
 
