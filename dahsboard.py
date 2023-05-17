@@ -126,8 +126,6 @@ def server_page():
                        {"id": 204995, "name": "Shadowed Alloy R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
                        {"id": 204996, "name": "Shadowed Alloy R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
                        {"id": 204994, "name": "Shadowed Alloy R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
-                       #Dracothyst Shard, might be unable to auction
-                       {"id": 204462, "name": "Dracothyst Shard", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
                        #Primal Flux, can be bought from vendors
                        {"id": 190452, "name": "Primal Flux", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
                        #Primal Molten Alloy
@@ -159,7 +157,7 @@ def server_page():
                        {"id": 190531, "name": "Frostfire Alloy R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
                        {"id": 190532, "name": "Frostfire Alloy R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None}
                     ]
-
+                    total_ores_on_ah = 0
                     for ore in ores:
                         ore_id = ore["id"]
                         response = requests.get(f"https://pricing-api.tradeskillmaster.com/ah/{selected_ah_id}/item/{ore_id}", headers={"Authorization": f"Bearer {access_token}"})
@@ -168,11 +166,12 @@ def server_page():
 
                             ore["minBuyout"] = ore_details["minBuyout"]
                             ore["quantity"] = ore_details["quantity"]
+                            total_ores_on_ah += ore_details["quantity"]
                             ore["marketValue"] = ore_details["marketValue"]
                             ore["historical"] = ore_details["historical"]
                             ore["numAuctions"] = ore_details["numAuctions"]
                         else:
-                            print(f"Error in gem details request for gem ID {ore_id}")
+                            print(f"Error in ore details request for ore ID {ore_id}")
                     #List of the dragonflight Cloths
                     cloths = [
                         #Axureweave Bolt
@@ -212,7 +211,7 @@ def server_page():
                         {"id": 193933, "name": "Infurious Wildercloth Bolt R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
                         {"id": 193934, "name": "Infurious Wildercloth Bolt R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None}  
                     ]
-
+                    total_cloths_on_ah = 0
                     for cloth in cloths:
                         cloth_id = cloth["id"]
                         response = requests.get(f"https://pricing-api.tradeskillmaster.com/ah/{selected_ah_id}/item/{cloth_id}", headers={"Authorization": f"Bearer {access_token}"})
@@ -221,11 +220,12 @@ def server_page():
 
                             cloth["minBuyout"] = cloth_details["minBuyout"]
                             cloth["quantity"] = cloth_details["quantity"]
+                            total_cloths_on_ah += cloth_details['quantity']
                             cloth["marketValue"] = cloth_details["marketValue"]
                             cloth["historical"] = cloth_details["historical"]
                             cloth["numAuctions"] = cloth_details["numAuctions"]
                         else:
-                            print(f"Error in gem details request for gem ID {cloth_id}")
+                            print(f"Error in cloth details request for cloth ID {cloth_id}")
                     #List of the dragonflight gems
                     gems = [
                         #Alextraszite
@@ -273,6 +273,7 @@ def server_page():
                         {"id": 192838, "name": "Queen's Ruby R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
                         {"id": 192839, "name": "Queen's Ruby R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None}
                         ]
+                    total_gems_on_ah = 0
                     for gem in gems:
                         gem_id = gem["id"]
                         response = requests.get(f"https://pricing-api.tradeskillmaster.com/ah/{selected_ah_id}/item/{gem_id}", headers={"Authorization": f"Bearer {access_token}"})
@@ -284,30 +285,89 @@ def server_page():
                             gem["marketValue"] = gem_details["marketValue"]
                             gem["historical"] = gem_details["historical"]
                             gem["numAuctions"] = gem_details["numAuctions"]
+                            total_gems_on_ah += gem_details['quantity']
                         else:
                             print(f"Error in gem details request for gem ID {gem_id}")   
 
-
-
-
-                    # DataFrame for gems        
-                    df = pd.DataFrame(gems)
-                    pd.options.display.float_format = '{:,.0f}'.format
-                    df["id"] = df["id"].astype(int)
-                    df.set_index("id", inplace=True)
-                   
-                    chart_data = df[["name","minBuyout", "marketValue"]].set_index('name')
-                    fig,ax = plt.subplots()
-                    chart_data.plot(kind='bar', ax=ax)
-
-
                     
-                    ax.set_xlabel("Gem Name")
-                    ax.set_ylabel("Value")
-                    ax.set_title("Gem Buyout Prices and Market values")
+                    df_gems = pd.DataFrame(gems)
+                    df_ores = pd.DataFrame(ores)
+                    df_cloths = pd.DataFrame(cloths)
+                    options = ['Ores','Gems','Cloths']
+                    
+                    total_items_on_ah = {
+                        'Item' : ['Gems', 'Ores', 'Cloths'],
+                        'Quantity': [total_gems_on_ah, total_ores_on_ah, total_cloths_on_ah]
+                    }
+                    df = pd.DataFrame(total_items_on_ah)
+                    
+                    
+                    col1,col2,col3 = st.columns([1,5,2])
+                    col4,col5,col6 = st.columns([7,1,5])
+                    
+                    with col1:
+                     selected_option = st.selectbox("What category of items do you want to look at?", options)
+                    with col3:
+                        default_items = ['Gems', 'Ores' , 'Cloths']
+                        selected_options = st.multiselect("What do you wanna display?", df['Item'].unique(), default=default_items)
+                    with col4:    
+                        if selected_option == 'Gems':
+                            
+                            st.subheader("Gem information")
+                            # DataFrame for gems        
+                            plost.bar_chart(
+                            data=df_gems,
+                            bar='name',
+                            stack='normalize',
+                            direction='horizontal',
+                            value=['historical', 'marketValue' ,'minBuyout'],
+                            title= f"Values for {selected_option} items on the auction house"
+                        )
+                        if selected_option == 'Ores':
 
-                    #plt.xticks(rotation=45)
-                    st.pyplot(fig)
+                            st.subheader("Ore information")
+                            plost.bar_chart(
+                            data=df_ores,
+                            bar='name',
+                            direction='horizontal',
+                            stack='normalize',
+                            value=['historical', 'marketValue' ,'minBuyout'],
+                            title= f"Values for {selected_option} items on the auction house"
+                        )
+                        if selected_option == 'Cloths':
+                            st.subheader("Cloth information")
+                            plost.bar_chart(
+                            data=df_cloths,
+                            bar='name',
+                            stack='normalize',
+                            direction='horizontal',
+                            value=['historical', 'marketValue' ,'minBuyout'],
+                            title= f"Values for {selected_option} items on the auction house"
+                        )
+                    with col6:
+                        string = ""
+                        for item in selected_options:
+                            string += item + ", "    
+                        st.subheader(f"Distribution amongst {string[:-2]}")
+                        filtered_df = df[df["Item"].isin(selected_options)]
+
+                        plost.donut_chart(
+                            data=filtered_df,
+                            theta='Quantity',
+                            color='Item',
+                            title='Quantity distribution between selected items'  
+                        )
+
+
+                        #value=['historical', 'marketValue' ,'minBuyout'],
+                        #plost.bar_chart(
+                            #data=df_gems,
+                           # bar='name',
+                          #  value=['minBuyout', 'marketValue'],
+                         #   title= "Min Buyout and market value prices on listed auction house items"
+                        #)
+
+                   
                    
                 if game_version == "Vanilla":
                     st.write("Please select a retail region")    
