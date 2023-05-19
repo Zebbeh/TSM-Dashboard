@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import statistics
 import requests
 import plost
 
@@ -267,12 +268,13 @@ def server_page():
                         #Illimited Diamond
                         {"id": 192869, "name": "Illimited Diamond R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
                         {"id": 192870, "name": "Illimited Diamond R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
-                        {"id": 192871, "name": "Illimited Diamond R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
+                        #{"id": 192871, "name": "Illimited Diamond R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
                         #Queen's Ruby
                         {"id": 192837, "name": "Queen's Ruby R1", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
                         {"id": 192838, "name": "Queen's Ruby R2", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None},
                         {"id": 192839, "name": "Queen's Ruby R3", "minBuyout": None, "quantity": None, "marketValue": None, "historical": None, "numAuctions": None}
                         ]
+                    total_price_of_gems = 0
                     total_gems_on_ah = 0
                     for gem in gems:
                         gem_id = gem["id"]
@@ -286,6 +288,7 @@ def server_page():
                             gem["historical"] = gem_details["historical"]
                             gem["numAuctions"] = gem_details["numAuctions"]
                             total_gems_on_ah += gem_details['quantity']
+                            total_price_of_gems += gem_details['minBuyout']
                         else:
                             print(f"Error in gem details request for gem ID {gem_id}")   
 
@@ -311,18 +314,28 @@ def server_page():
                         default_items = ['Gems', 'Ores' , 'Cloths']
                         selected_options = st.multiselect("What do you wanna display?", df['Item'].unique(), default=default_items)
                     with col4:    
+
+                        average_price_of_gems = total_price_of_gems / len(df_gems['minBuyout'])
+                       # median_price_of_gems = statistics.median(total_price_of_gems)
                         if selected_option == 'Gems':
+                            st.metric('Average price of the gems', value=average_price_of_gems)
                             
                             st.subheader("Gem information")
                             # DataFrame for gems        
-                            plost.bar_chart(
-                            data=df_gems,
-                            bar='name',
-                            stack='normalize',
-                            direction='horizontal',
-                            value=['historical', 'marketValue' ,'minBuyout'],
-                            title= f"Values for {selected_option} items on the auction house"
-                        )
+                            #plost.bar_chart(
+                            #data=df_gems,
+                            #bar='name',
+                            #stack='normalize',
+                            #direction='horizontal',
+                            #value=['historical', 'marketValue' ,'minBuyout'],
+                            #title= f"Values for {selected_option} items on the auction house"
+                        #)
+                            plost.scatter_chart(
+                                data=df_gems,
+                                x="name",
+                                y=["minBuyout", "marketValue"],
+                                size="quantity"
+                            )
                         if selected_option == 'Ores':
 
                             st.subheader("Ore information")
